@@ -9,7 +9,7 @@ data "template_file" "user_data" {
 }
 
 resource "aws_instance" "laravel_backend" {
-  ami                         = "ami-00aa9d3df94c6c354"
+  ami                         = "ami-0faab6bdbac9486fb"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.private_subnet_1.id
   vpc_security_group_ids      = [aws_security_group.laravel_sg.id]
