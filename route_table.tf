@@ -23,14 +23,20 @@ resource "aws_route_table_association" "public_2_assoc" {
   route_table_id = aws_route_table.tadka_public_rt.id
 }
 
-# Private Route Table for Laravel Backend — NO internet route
+# Private Route Table for Laravel Backend — WITH NAT internet route
 resource "aws_route_table" "tadka_private_rt" {
   vpc_id = aws_vpc.tadka_vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.tadka_nat.id
+  }
 
   tags = {
     Name = "tadka-private-rt"
   }
 }
+
 
 # Associate Private Subnets (Laravel backend)
 resource "aws_route_table_association" "private_1_assoc" {
