@@ -32,7 +32,7 @@ resource "aws_instance" "laravel_backend" {
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.private_subnet_1.id
   vpc_security_group_ids      = [aws_security_group.laravel_sg.id]
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   key_name                    = "tadka-twist-204"
 
   user_data = data.template_file.user_data.rendered
