@@ -1,3 +1,21 @@
+# Get latest Amazon Linux 2 AMI in eu-central-1
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["137112412989"] # Amazon official
+}
+
+# Read and inject user_data template with DB credentials
 data "template_file" "user_data" {
   template = file("${path.module}/templates/user_data.sh")
 
@@ -8,8 +26,9 @@ data "template_file" "user_data" {
   }
 }
 
+# Launch EC2 instance
 resource "aws_instance" "laravel_backend" {
-  ami                         = "ami-0faab6bdbac9486fb"
+  ami                         = data.aws_ami.amazon_linux.id
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.private_subnet_1.id
   vpc_security_group_ids      = [aws_security_group.laravel_sg.id]
@@ -22,4 +41,3 @@ resource "aws_instance" "laravel_backend" {
     Name = "tadka-laravel-backend-ec2"
   }
 }
-
