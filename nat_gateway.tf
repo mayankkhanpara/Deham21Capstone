@@ -7,7 +7,7 @@ resource "aws_eip" "nat_eip" {
   }
 }
 
-# NAT Gateway in the public subnet
+# NAT Gateway in public subnet
 resource "aws_nat_gateway" "tadka_nat" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet_1.id
