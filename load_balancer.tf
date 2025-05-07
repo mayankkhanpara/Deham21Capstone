@@ -1,10 +1,11 @@
-# Create ALB Security Group (allow HTTP from anywhere)
+# ALB Security Group (Allow HTTP from anywhere)
 resource "aws_security_group" "alb_sg" {
   name        = "tadka-alb-sg"
   description = "Allow HTTP access to ALB"
   vpc_id      = aws_vpc.tadka_vpc.id
 
   ingress {
+    description = "Allow HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -12,6 +13,7 @@ resource "aws_security_group" "alb_sg" {
   }
 
   egress {
+    description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -37,7 +39,7 @@ resource "aws_lb_target_group" "tadka_tg" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
-    matcher             = "200"
+    matcher             = "200-399" # Laravel install returns 302
   }
 
   tags = {
@@ -52,7 +54,7 @@ resource "aws_lb_target_group_attachment" "tadka_tg_attachment" {
   port             = 80
 }
 
-# Create ALB
+# Application Load Balancer
 resource "aws_lb" "tadka_alb" {
   name               = "tadka-alb"
   internal           = false
@@ -68,7 +70,7 @@ resource "aws_lb" "tadka_alb" {
   }
 }
 
-# Listener: Forward HTTP traffic to target group
+# HTTP Listener
 resource "aws_lb_listener" "tadka_listener" {
   load_balancer_arn = aws_lb.tadka_alb.arn
   port              = 80
@@ -78,4 +80,10 @@ resource "aws_lb_listener" "tadka_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tadka_tg.arn
   }
+}
+
+# ✅ Output for browser access
+output "alb_dns_name" {
+  description = "Public DNS of the Application Load Balancer"
+  value       = aws_lb.tadka_alb.dns_name
 }
