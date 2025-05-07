@@ -34,7 +34,7 @@ resource "aws_lb_target_group" "tadka_tg" {
   vpc_id      = aws_vpc.tadka_vpc.id
 
   health_check {
-    path                = "/"
+    path                = "/install"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
