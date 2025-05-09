@@ -20,3 +20,13 @@ resource "aws_subnet" "private_subnet" {
     Name = "tadka-twist-private-subnet"
   }
 }
+# Private Subnet in eu-central-1b
+resource "aws_subnet" "private_subnet_b" {
+  vpc_id            = aws_vpc.tadka_twist_vpc.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "eu-central-1b"
+
+  tags = {
+    Name = "tadka-twist-private-subnet-b"
+  }
+}
