@@ -30,3 +30,7 @@ variable "rds_instance_type" {
   default     = "db.t3.micro"
   description = "RDS instance class"
 }
+variable "alert_email" {
+  description = "Email to receive SNS alerts"
+  type        = string
+}
