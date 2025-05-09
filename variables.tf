@@ -11,3 +11,22 @@ variable "aws_availability_zone_a" {
   default     = "eu-central-1a"
   description = "Primary AZ"
 }
+variable "db_name" {
+  description = "Database name for Laravel app"
+  type        = string
+}
+
+variable "db_user" {
+  description = "Database admin username"
+  type        = string
+}
+
+variable "db_pass" {
+  description = "Database admin password"
+  type        = string
+}
+
+variable "rds_instance_type" {
+  default     = "db.t3.micro"
+  description = "RDS instance class"
+}
