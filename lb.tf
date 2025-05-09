@@ -2,14 +2,24 @@ resource "aws_lb" "tadka_alb" {
   name               = "tadka-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups   = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.public_subnet.id]
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = [aws_subnet.public_subnet.id, aws_subnet.public_subnet2.id]  # Use two subnets from different AZs
   enable_deletion_protection = false
-
   enable_cross_zone_load_balancing = true
 
   tags = {
     Name    = "Tadka Twist ALB"
+    Project = "Tadka Twist"
+  }
+}
+
+resource "aws_subnet" "public_subnet2" {
+  vpc_id                  = aws_vpc.tadka_vpc.id
+  cidr_block              = "10.0.3.0/24"
+  availability_zone       = "eu-central-1b"  # Different AZ from public_subnet
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "tadka-public-subnet-2"
     Project = "Tadka Twist"
   }
 }
