@@ -1,13 +1,13 @@
-# Bastion Host Security Group
+# Bastion Host Security Group (Public Subnet)
 resource "aws_security_group" "bastion_sg" {
-  name        = "tadka-bastion-sg"
-  description = "Allow SSH access to Bastion Host from trusted IPs"
+  vpc_id = aws_vpc.tadka_vpc.id
 
+  # Allow SSH access from anywhere (or restrict to specific IPs for more security)
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["84.143.29.54/32"]
+    cidr_blocks = ["0.0.0.0/0"] # Replace with a specific IP for better security
   }
 
   egress {
@@ -16,65 +16,35 @@ resource "aws_security_group" "bastion_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
 
-# ALB Security Group (HTTP/HTTPS)
-resource "aws_security_group" "alb_sg" {
-  name        = "tadka-alb-sg"
-  description = "Allow HTTP/HTTPS access to ALB"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow from anywhere
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allow from anywhere
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  tags = {
+    Name    = "tadka-bastion-sg"
+    Project = "Tadka Twist"
   }
 }
 
-# EC2 (Laravel) Security Group
+# EC2 Instance Security Group (Private Subnet)
 resource "aws_security_group" "ec2_sg" {
-  name        = "tadka-ec2-sg"
-  description = "Allow HTTP/HTTPS from ALB and SSH from Bastion Host"
+  vpc_id = aws_vpc.tadka_vpc.id
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    security_groups = [aws_security_group.alb_sg.id] # Allow only from ALB
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    security_groups = [aws_security_group.alb_sg.id] # Allow only from ALB
-  }
-
+  # Allow SSH access only from the Bastion host
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    security_groups = [aws_security_group.bastion_sg.id] # Allow SSH only from Bastion Host
+    cidr_blocks = [aws_security_group.bastion_sg.ingress[0].cidr_blocks[0]]
   }
 
+  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "tadka-ec2-sg"
+    Project = "Tadka Twist"
   }
 }
