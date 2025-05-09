@@ -32,13 +32,17 @@ resource "aws_lb" "tadka_twist_alb" {
   name               = "tadka-twist-alb"
   internal           = false
   load_balancer_type = "application"
-  subnets            = [aws_subnet.public_subnet.id]
+  subnets            = [
+    aws_subnet.public_subnet.id,
+    aws_subnet.public_subnet_b.id
+  ]
   security_groups    = [aws_security_group.app_sg.id]
 
   tags = {
     Name = "tadka-twist-alb"
   }
 }
+
 
 # ALB Listener
 resource "aws_lb_listener" "http" {
