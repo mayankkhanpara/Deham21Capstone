@@ -1,19 +1,14 @@
-# Replace this with your IP address (get via https://whatismyipaddress.com/)
-variable "my_ip" {
-  default = "YOUR.IP.ADDRESS.HERE/32"
-}
-
 # Security Group for Bastion Host (public subnet)
 resource "aws_security_group" "bastion_sg" {
   name        = "bastion-sg"
-  description = "Allow SSH from my IP"
+  description = "Allow SSH from office IP"
   vpc_id      = aws_vpc.tadka_twist_vpc.id
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = [var.office_ip]
   }
 
   egress {
@@ -45,7 +40,7 @@ resource "aws_security_group" "app_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Will be refined when ALB is created
+    cidr_blocks = ["0.0.0.0/0"] # Temporary until ALB is defined
   }
 
   egress {
